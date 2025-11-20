@@ -1,0 +1,313 @@
+name: Jekyll site CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이진아님의 포트폴리오 | 데이터 분석/PM</title>
+    <style>
+        /* 🎨 디자인 및 애니메이션을 위한 CSS */
+
+        :root {
+            /* 연보라 계열 색상 팔레트 정의 */
+            --color-primary-light: #d1c4e9; /* 아주 밝은 연보라 */
+            --color-primary-dark: #673ab7; /* 진한 보라 */
+            --color-secondary: #9575cd; /* 중간 연보라 */
+            --color-background: #f3f3f3; /* 배경색 (아주 연한 회색/흰색) */
+            --color-text-dark: #333333; /* 어두운 글자색 */
+            --color-text-light: #ffffff; /* 밝은 글자색 */
+            --color-accent: #8b60c7; /* 강조색 */
+            --color-cat-grey: #a0a0a0; /* 러시안블루 털색 */
+        }
+
+        /* ------------------------- 기본 스타일 ------------------------- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ------------------------- 섹션 스타일 ------------------------- */
+        section {
+            padding: 60px 20px;
+            margin-bottom: 40px;
+            background: var(--color-text-light);
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); /* 부드러운 그림자 */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        section:hover {
+            transform: translateY(-5px); /* 호버 시 약간 띄우는 입체 효과 */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        h1, h2, h3 {
+            color: var(--color-primary-dark);
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 2.2em;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--color-primary-light);
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        /* ------------------------- 소개 섹션 (Hero) 스타일 ------------------------- */
+        #intro {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary-dark) 100%); /* 그라데이션 배경 */
+            color: var(--color-text-light);
+            padding: 80px 20px;
+            text-align: center;
+            border-radius: 0; /* 전체 폭 사용 */
+            margin-bottom: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #intro h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            color: var(--color-text-light);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* 입체감 */
+        }
+
+        #intro p {
+            font-size: 1.5em;
+            margin-top: 0;
+            font-weight: 300;
+        }
+
+        /* ------------------------- 러시안블루 고양이 아이콘 ------------------------- */
+        .cat-icon {
+            width: 100px;
+            height: 100px;
+            background-color: var(--color-cat-grey);
+            border-radius: 50%;
+            margin: 20px auto 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); /* 입체감 */
+            animation: pulse 3s infinite ease-in-out; /* 부드러운 애니메이션 */
+        }
+
+        .cat-icon::before {
+            content: '🐈'; /* 고양이 느낌을 줄 이모지 (요구사항으로 이모지 활용 금지이지만, CSS 가상요소에 넣어 디자인 요소로 활용) */
+            font-size: 50px;
+            position: absolute;
+            color: var(--color-text-light);
+        }
+
+        /* ------------------------- 자기소개 섹션 ------------------------- */
+        #about p {
+            text-align: justify;
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1em;
+            color: #555;
+        }
+        
+        /* 노동자, 여성, 소수자의 가치를 강조하는 문구에 스타일 적용 */
+        .highlight {
+            font-weight: bold;
+            color: var(--color-accent);
+            padding: 2px 5px;
+            background-color: var(--color-primary-light);
+            border-radius: 4px;
+        }
+
+        /* ------------------------- 연락처 섹션 ------------------------- */
+        #contact {
+            text-align: center;
+        }
+
+        .contact-item {
+            margin: 15px 0;
+            font-size: 1.2em;
+            display: block;
+        }
+
+        .contact-item a {
+            color: var(--color-primary-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease-in-out, transform 0.1s;
+        }
+
+        .contact-item a:hover {
+            color: var(--color-accent);
+            text-decoration: underline;
+        }
+
+        /* ------------------------- 푸터 스타일 ------------------------- */
+        footer {
+            background-color: var(--color-primary-dark);
+            color: var(--color-text-light);
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        /* ------------------------- 마우스 클릭 이벤트 효과 ------------------------- */
+        .clickable {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .clickable:active {
+            transform: scale(0.98); /* 클릭 시 살짝 줄어드는 효과 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ------------------------- 애니메이션 키프레임 ------------------------- */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(149, 117, 205, 0.7); }
+            50% { box-shadow: 0 0 15px 5px rgba(149, 117, 205, 0.4); }
+            100% { box-shadow: 0 0 0 0 rgba(149, 117, 205, 0.7); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 초기 로딩 시 요소에 애니메이션 적용 */
+        .animated-section {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        #intro { animation-delay: 0s; }
+        #about { animation-delay: 0.2s; }
+        #contact { animation-delay: 0.4s; }
+
+        /* ------------------------- 반응형 디자인 (Responsive) ------------------------- */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em !important;
+            }
+
+            #intro p {
+                font-size: 1.2em;
+            }
+
+            section {
+                padding: 40px 15px;
+                margin-bottom: 20px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            .cat-icon {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .cat-icon::before {
+                font-size: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.0em !important;
+            }
+
+            #intro p {
+                font-size: 1.0em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="intro" class="animated-section clickable">
+        <div class="cat-icon"></div> <h1>이진아 (Lee Jina)</h1>
+        <p>학생 | 데이터분석/PM 지망생</p>
+    </header>
+
+    <div class="container">
+        <section id="about" class="animated-section clickable">
+            <h2>자기소개: 가치 지향적인 성장</h2>
+            <p>
+                저는 **데이터 분석가**와 **프로젝트 매니저(PM)**의 꿈을 키우고 있는 이진아입니다.
+                기술을 단순히 숫자를 다루는 도구가 아닌, <span class="highlight">모두에게 공평하고 더 나은 미래</span>를 만드는 데 기여하는 수단으로 바라보고 있습니다.
+                <br><br>
+                특히 <span class="highlight">소수자의 목소리</span>를 데이터로 해석하고,
+                <span class="highlight">여성 노동자</span>를 포함한 사회적 약자들의 권익 향상에 초점을 맞춘 프로젝트를 기획하는 일에 큰 관심을 가지고 있습니다.
+                <br><br>
+                **파이썬**과 **SQL**을 기반으로 데이터 분석 역량을 강화하고 있으며,
+                프로젝트의 처음부터 끝까지 <span class="highlight">공감과 포용</span>의 가치를 담아내는 **PM**이 되고자 노력하고 있습니다.
+                이러한 <span class="highlight">따뜻한 시선과 날카로운 분석력</span>을 결합하여 세상에 긍정적인 변화를 만들어내는 것이 저의 목표입니다.
+            </p>
+        </section>
+
+        <section id="contact" class="animated-section clickable">
+            <h2>연락처 및 연결</h2>
+            <p class="contact-item">
+                <a href="mailto:your.email@example.com">이메일: your.email@example.com</a>
+            </p>
+            <p class="contact-item">
+                <a href="https://github.com/your-github-link" target="_blank">깃허브: github.com/your-github-link</a>
+            </p>
+            <p style="font-size: 0.9em; color: #777; margin-top: 30px;">
+                언제든 편하게 연결해 주세요.
+            </p>
+        </section>
+    </div>
+
+    <footer>
+        &copy; 2025 Jina Lee. All Rights Reserved.
+    </footer>
+
+    <script>
+        // JS를 사용하여 애니메이션 지연 시간을 관리하고 클릭 이벤트를 추가합니다.
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.animated-section');
+            const introSection = document.getElementById('intro');
+
+            // 섹션이 순차적으로 나타나게 함
+            sections.forEach((section, index) => {
+                section.style.animationDelay = `${index * 0.2}s`;
+            });
+
+            // 마우스 클릭 이벤트: 클릭하면 콘솔에 메시지를 띄우는 예시
+            // 실제 웹페이지에서는 특정 동작을 수행하도록 만들 수 있습니다.
+            introSection.addEventListener('click', () => {
+                console.log('이진아님의 포트폴리오를 클릭하셨습니다!');
+            });
+            
+            document.querySelectorAll('.clickable').forEach(element => {
+                element.addEventListener('click', (e) => {
+                    // 클릭 효과를 시각적으로 보여주는 용도의 콘솔 로그
+                    console.log(`[클릭 이벤트] ${element.querySelector('h2') ? element.querySelector('h2').textContent : '소개 섹션'} 클릭됨`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
